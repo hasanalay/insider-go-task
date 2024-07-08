@@ -17,11 +17,12 @@ type Team struct {
 
 type Match struct {
 	ID        uint `gorm:"primary key; autoIncrement" json:"id"`
-	Week      uint `json:"week"`
-	HomeID    uint `json:"home_id"`
-	AwayID    uint `json:"away_id"`
-	HomeGoals uint `json:"home_goals"`
-	AwayGoals uint `json:"away_goals"`
+	Week      uint `gorm:"default:0" json:"week"`
+	HomeID    uint `gorm:"default:0" json:"home_id"`
+	AwayID    uint `gorm:"default:0" json:"away_id"`
+	HomeGoals uint `gorm:"default:0" json:"home_goals"`
+	AwayGoals uint `gorm:"default:0" json:"away_goals"`
+	IsPlayed  bool `gorm:"default:false" json:"is_played"`
 }
 
 func MigrateTeams(db *gorm.DB) error {

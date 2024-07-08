@@ -25,7 +25,14 @@ type Team struct {
 	GoalDifference int    `json:"goal_difference"`
 	Power          int    `json:"power"`
 }
-
+type Match struct {
+	Week      uint `json:"week"`
+	HomeID    uint `json:"home_id"`
+	AwayID    uint `json:"away_id"`
+	HomeGoals uint `json:"home_goals"`
+	AwayGoals uint `json:"away_goals"`
+	IsPlayed  bool `json:"is_played"`
+}
 
 func (r *Repository) createTeam(context *fiber.Ctx) error {
 	team := Team{}
@@ -54,6 +61,12 @@ func (r *Repository) getTeams(context *fiber.Ctx) error {
 			&fiber.Map{"message": "Could not get the teams!"})
 		return err
 	}
+
+	if len(*teamModels) == 0 {
+		context.Status(http.StatusNotFound).JSON(
+			&fiber.Map{"message": "There is no team in the database"})
+		return nil
+	}
 	context.Status(http.StatusOK).JSON(
 		&fiber.Map{
 			"message": "Teams fetched succesfully",
@@ -63,7 +76,7 @@ func (r *Repository) getTeams(context *fiber.Ctx) error {
 }
 
 func (r *Repository) getTeamByID(context *fiber.Ctx) error {
-	teamModel := &[]models.Team{}
+	teamModel := &models.Team{}
 	id := context.Params("id")
 	if id == "" {
 		context.Status(http.StatusInternalServerError).JSON(
@@ -72,8 +85,13 @@ func (r *Repository) getTeamByID(context *fiber.Ctx) error {
 	}
 	err := r.DB.Where("id = ?", id).First(teamModel).Error
 	if err != nil {
-		context.Status(http.StatusBadRequest).JSON(
-			&fiber.Map{"message": "Could not get the team!"})
+		if err == gorm.ErrRecordNotFound {
+			context.Status(http.StatusNotFound).JSON(
+				&fiber.Map{"message": "Team not found!"})
+		} else {
+			context.Status(http.StatusBadRequest).JSON(
+				&fiber.Map{"message": "Could not get the team!"})
+		}
 		return err
 	}
 	context.Status(http.StatusOK).JSON(
@@ -132,6 +150,84 @@ func (r *Repository) updateTeam(context *fiber.Ctx) error {
 	return nil
 }
 
+func (r *Repository) getMatches(context *fiber.Ctx) error {
+	matchModels := &[]models.Match{}
+	err := r.DB.Find(matchModels).Error
+	if err != nil {
+		context.Status(http.StatusBadRequest).JSON(
+			&fiber.Map{"message": "Could not get the matchs!"})
+		return err
+	}
+
+	if len(*matchModels) == 0 {
+		context.Status(http.StatusNotFound).JSON(
+			&fiber.Map{"message": "No matches found for the given week!"})
+		return nil
+	}
+	context.Status(http.StatusOK).JSON(
+		&fiber.Map{
+			"message": "Matchs fetched succesfully",
+			"data":    matchModels,
+		})
+	return nil
+}
+
+func (r *Repository) getMatchesByWeek(context *fiber.Ctx) error {
+	matchModels := &[]models.Match{}
+	week := context.Params("week")
+	if week == "" {
+		context.Status(http.StatusInternalServerError).JSON(
+			&fiber.Map{"message": "week cannot be empty!"})
+		return nil
+	}
+	err := r.DB.Where("week  = ?", week).Find(matchModels).Error
+	if err != nil {
+		context.Status(http.StatusBadRequest).JSON(
+			&fiber.Map{"message": "Could not get the matches of week!"})
+		return err
+	}
+
+	if len(*matchModels) == 0 {
+		context.Status(http.StatusNotFound).JSON(
+			&fiber.Map{"message": "No matches found for the given week!"})
+		return nil
+	}
+	context.Status(http.StatusOK).JSON(
+		&fiber.Map{
+			"message": "Match fetched successfully!",
+			"data":    matchModels,
+		})
+	return nil
+}
+
+func (r *Repository) updateMatch(context *fiber.Ctx) error {
+	matchModel := models.Match{}
+	id := context.Params("id")
+	if id == "" {
+		context.Status(http.StatusBadRequest).JSON(
+			&fiber.Map{"message": "id cannot be empty!"})
+		return nil
+	}
+
+	match := Match{}
+	if err := context.BodyParser(&match); err != nil {
+		context.Status(http.StatusUnprocessableEntity).JSON(
+			&fiber.Map{"message": "Request failed!"})
+		return err
+	}
+
+	result := r.DB.Model(&matchModel).Where("id = ?", id).Updates(match)
+	if result.Error != nil {
+		context.Status(http.StatusBadRequest).JSON(
+			&fiber.Map{"message": "Could not update the match!"})
+		return result.Error
+	}
+
+	context.Status(http.StatusOK).JSON(
+		&fiber.Map{"message": "Match updated successfully!"})
+	return nil
+}
+
 
 func (r *Repository) setupRoutes(app *fiber.App) {
 	api := app.Group("/api")
@@ -140,6 +236,10 @@ func (r *Repository) setupRoutes(app *fiber.App) {
 	api.Get("teams/:id", r.getTeamByID)
 	api.Delete("delete_team/:id", r.deleteTeam)
 	api.Put("update_team/:id", r.updateTeam)
+
+	api.Get("matches", r.getMatches)
+	api.Get("matches/:week", r.getMatchesByWeek)
+	api.Put("update_match/:id", r.updateMatch)
 }
 
 func main() {
