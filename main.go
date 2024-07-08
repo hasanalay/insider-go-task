@@ -152,7 +152,7 @@ func (r *Repository) updateTeam(context *fiber.Ctx) error {
 
 func (r *Repository) getMatches(context *fiber.Ctx) error {
 	matchModels := &[]models.Match{}
-	err := r.DB.Find(matchModels).Error
+	err := r.DB.Order("id").Find(matchModels).Error
 	if err != nil {
 		context.Status(http.StatusBadRequest).JSON(
 			&fiber.Map{"message": "Could not get the matchs!"})
