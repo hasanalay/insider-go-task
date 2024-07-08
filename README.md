@@ -1,7 +1,7 @@
 Details are coming soon...
 
 
-# H3 Manually Create Fixture Data
+### Manually Create Fixture Data
 
 ```
 INSERT INTO matches (id, week, home_id, away_id, home_goals, away_goals, is_played)
