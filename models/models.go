@@ -5,23 +5,23 @@ import (
 )
 
 type Team struct {
-	ID             int    `gorm:"primary key; autoIncrement" json:"id"`
+	ID             uint   `gorm:"primary key; autoIncrement" json:"id"`
 	TeamName       string `json:"team_name"`
-	Points         int    `json:"points"`
-	Win            int    `json:"win"`
-	Draw           int    `json:"lose"`
-	Lose           int    `json:"draw"`
+	Points         uint   `json:"points"`
+	Win            uint   `json:"win"`
+	Draw           uint   `json:"lose"`
+	Lose           uint   `json:"draw"`
 	GoalDifference int    `json:"goal_difference"`
 	Power          int    `json:"power"`
 }
 
 type Match struct {
-	ID        int `gorm:"primary key; autoIncrement" json:"id"`
-	Week      int `json:"week"`
-	HomeID    int `json:"home_id"`
-	AwayID    int `json:"away_id"`
-	HomeGoals int `json:"home_goals"`
-	AwayGoals int `json:"away_goals"`
+	ID        uint `gorm:"primary key; autoIncrement" json:"id"`
+	Week      uint `json:"week"`
+	HomeID    uint `json:"home_id"`
+	AwayID    uint `json:"away_id"`
+	HomeGoals uint `json:"home_goals"`
+	AwayGoals uint `json:"away_goals"`
 }
 
 func MigrateTeams(db *gorm.DB) error {
