@@ -20,8 +20,8 @@ type Team struct {
 	TeamName       string `json:"team_name"`
 	Points         uint   `json:"points"`
 	Win            uint   `json:"win"`
-	Draw           uint   `json:"lose"`
-	Lose           uint   `json:"draw"`
+	Draw           uint   `json:"draw"`
+	Lose           uint   `json:"lose"`
 	GoalDifference int    `json:"goal_difference"`
 	Power          int    `json:"power"`
 }
@@ -200,34 +200,78 @@ func (r *Repository) getMatchesByWeek(context *fiber.Ctx) error {
 	return nil
 }
 
-func (r *Repository) updateMatch(context *fiber.Ctx) error {
-	matchModel := models.Match{}
-	id := context.Params("id")
-	if id == "" {
+func determineMatchOutcome(homePower int, awayPower int) (homeGoals int, awayGoals int) {
+	if homePower == awayPower {
+		homeGoals = 1
+		awayGoals = 1
+	} else if homePower > awayPower {
+		homeGoals = 2
+		awayGoals = 1
+	} else {
+		homeGoals = 1
+		awayGoals = 2
+	}
+	return
+}
+
+func (r *Repository) playMatchesByWeek(context *fiber.Ctx) error {
+	week := context.Params("week")
+	if week == "" {
 		context.Status(http.StatusBadRequest).JSON(
-			&fiber.Map{"message": "id cannot be empty!"})
+			&fiber.Map{"message": "Week cannot be empty!"})
 		return nil
 	}
-
-	match := Match{}
-	if err := context.BodyParser(&match); err != nil {
-		context.Status(http.StatusUnprocessableEntity).JSON(
-			&fiber.Map{"message": "Request failed!"})
+	// Belirtilen haftadaki tüm maçları al
+	var matches []models.Match
+	err := r.DB.Where("week = ?", week).Find(&matches).Error
+	if err != nil {
+		context.Status(http.StatusInternalServerError).JSON(
+			&fiber.Map{"message": "Could not retrieve matches!"})
 		return err
 	}
 
-	result := r.DB.Model(&matchModel).Where("id = ?", id).Updates(match)
-	if result.Error != nil {
-		context.Status(http.StatusBadRequest).JSON(
-			&fiber.Map{"message": "Could not update the match!"})
-		return result.Error
+	for _, match := range matches {
+		var homeTeam, awayTeam models.Team
+		// Ev sahibi ve deplasman takımlarını veritabanından al
+		r.DB.First(&homeTeam, match.HomeID)
+		r.DB.First(&awayTeam, match.AwayID)
+
+		// Maç sonucunu belirle
+		homeGoals, awayGoals := determineMatchOutcome(homeTeam.Power, awayTeam.Power)
+
+		// Match tablosunu güncelle
+		match.HomeGoals = uint(homeGoals)
+		match.AwayGoals = uint(awayGoals)
+		match.IsPlayed = true
+		r.DB.Save(&match)
+
+		// Team tablosunu güncelle
+		homeTeam.GoalDifference += homeGoals - awayGoals
+		awayTeam.GoalDifference += awayGoals - homeGoals
+
+		if homeGoals > awayGoals {
+			homeTeam.Win++
+			homeTeam.Points += 3
+			awayTeam.Lose++
+		} else if awayGoals > homeGoals {
+			awayTeam.Win++
+			awayTeam.Points += 3
+			homeTeam.Lose++
+		} else {
+			homeTeam.Draw++
+			homeTeam.Points++
+			awayTeam.Draw++
+			awayTeam.Points++
+		}
+
+		r.DB.Save(&homeTeam)
+		r.DB.Save(&awayTeam)
 	}
 
 	context.Status(http.StatusOK).JSON(
-		&fiber.Map{"message": "Match updated successfully!"})
+		&fiber.Map{"message": "Match results determined and tables updated successfully!"})
 	return nil
 }
-
 
 func (r *Repository) setupRoutes(app *fiber.App) {
 	api := app.Group("/api")
@@ -239,7 +283,7 @@ func (r *Repository) setupRoutes(app *fiber.App) {
 
 	api.Get("matches", r.getMatches)
 	api.Get("matches/:week", r.getMatchesByWeek)
-	api.Put("update_match/:id", r.updateMatch)
+	api.Put("play_match/:week", r.playMatchesByWeek)
 }
 
 func main() {

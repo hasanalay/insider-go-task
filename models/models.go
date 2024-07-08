@@ -9,8 +9,8 @@ type Team struct {
 	TeamName       string `json:"team_name"`
 	Points         uint   `json:"points"`
 	Win            uint   `json:"win"`
-	Draw           uint   `json:"lose"`
-	Lose           uint   `json:"draw"`
+	Draw           uint   `json:"draw"`
+	Lose           uint   `json:"lose"`
 	GoalDifference int    `json:"goal_difference"`
 	Power          int    `json:"power"`
 }
