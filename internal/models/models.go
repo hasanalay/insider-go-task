@@ -1,8 +1,6 @@
 package models
 
-import (
-	"gorm.io/gorm"
-)
+//"gorm.io/gorm"
 
 type Team struct {
 	ID             uint   `gorm:"primary key; autoIncrement" json:"id"`
@@ -23,14 +21,8 @@ type Match struct {
 	HomeGoals uint `gorm:"default:0" json:"home_goals"`
 	AwayGoals uint `gorm:"default:0" json:"away_goals"`
 	IsPlayed  bool `gorm:"default:false" json:"is_played"`
-}
 
-func MigrateTeams(db *gorm.DB) error {
-	err := db.AutoMigrate(&Team{})
-	return err
-}
+	HomeTeam Team `gorm:"foreignkey:home_id" json:"home_team"`
+    AwayTeam Team `gorm:"foreignkey:away_id" json:"away_team"`
 
-func MigrateMatches(db *gorm.DB) error {
-	err := db.AutoMigrate(&Match{})
-	return err
 }
