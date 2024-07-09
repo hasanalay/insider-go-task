@@ -26,18 +26,23 @@ func main() {
 	if err := db.ConnectDB(); err != nil {
 		log.Fatal(err)
 	}
-	app.Get("/teams", handlers.GetTeams)
-	app.Post("/teams", handlers.CreateTeam)
-	app.Get("/teams/:id", handlers.GetTeamByID)
-	app.Put("/teams/:id", handlers.UpdateTeam)
+
+	api := app.Group("/api")
+	api.Get("/teams", handlers.GetTeams)
+	api.Post("/teams", handlers.CreateTeam)
+	api.Get("/teams/:id", handlers.GetTeamByID)
+	api.Put("/teams/:id", handlers.UpdateTeam)
 	app.Delete("/teams/:id", handlers.DeleteTeam)
 
-	app.Get("/matches", handlers.GetMatches)
-	app.Post("/matches", handlers.CreateMatch)
-	app.Get("/matches/:id", handlers.GetMatchByID)
-	app.Put("/matches/:id", handlers.UpdateMatch)
-	app.Delete("/matches/:id", handlers.DeleteMatch)
-	app.Get("matches/week/:week", handlers.GetMatchesByWeek)
+	api.Get("/matches", handlers.GetMatches)
+	api.Post("/matches", handlers.CreateMatch)
+	api.Get("/matches/:id", handlers.GetMatchByID)
+	api.Put("/matches/:id", handlers.UpdateMatch)
+	api.Delete("/matches/:id", handlers.DeleteMatch)
+	api.Get("/matches/week/:week", handlers.GetMatchesByWeek)
+
+	api.Get("/league/:week", handlers.PlayMatch)
+	api.Get("/leaugue", handlers.PlayAllMatches)
 
 	app.Listen(":3000")
 }

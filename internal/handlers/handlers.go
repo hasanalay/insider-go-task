@@ -225,4 +225,46 @@ func GetMatchesByWeek(c *fiber.Ctx) error {
 	})
 }
 
+func PlayMatch(c *fiber.Ctx) error {
+	week, err := strconv.Atoi(c.Params("week"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid match week number",
+		})
+	}
+	matches, err := repository.PlayMatch(uint(week))
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	if len(matches) == 0 {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": "Matches not found",
+		})
+	}
+	return c.JSON(fiber.Map{
+		"message": fmt.Sprintf("Matches of week:%s played successfully!", c.Params("week")),
+		"data":    matches,
+	})
+}
+
+func PlayAllMatches(c *fiber.Ctx) error {
+	matches, err := repository.PlayAllMatches()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	if len(matches) == 0 {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": "Matches not found",
+		})
+	}
+	return c.JSON(fiber.Map{
+		"message": " All Matches played successfully!",
+		"data":    matches,
+	})
+}
+
 //endregion Match
