@@ -45,7 +45,7 @@ func main() {
 	api.Get("/matches/week/:week", handlers.GetMatchesByWeek)
 
 	api.Get("/league/:week", handlers.PlayMatch)
-	api.Get("/leaugue", handlers.PlayAllMatches)
+	api.Get("/league", handlers.PlayAllMatches)
 	api.Put("/league/change-match/:id", handlers.ChangeMatchResult)
 
 	app.Listen(":3000")
