@@ -135,11 +135,11 @@ func GetMatchesByWeek(week uint) ([]models.Match, error) {
 //	@param week
 //	@return []models.Match
 //	@return error
-func PlayMatch(week uint) ([]models.Match, error) {
+func PlayMatch(week uint) ([]models.Match,[]models.Team, error) {
 	matches := []models.Match{}
 
 	if err := db.DB.Preload("HomeTeam").Preload("AwayTeam").Where("week = ?", week).Find(&matches).Error; err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	for i := range matches {
 		if !matches[i].IsPlayed {
@@ -175,18 +175,22 @@ func PlayMatch(week uint) ([]models.Match, error) {
 			db.DB.Save(&awayTeam)
 		}
 	}
-	return matches, nil
+	teams := []models.Team{}
+	if err := db.DB.Order("points DESC").Order("goal_difference DESC").Find(&teams).Error; err != nil {
+		return nil, nil, err
+	}
+	return matches, teams, nil
 }
 
 // PlayAllMatches  plays all matches at once
 //
 //	@return []models.Match
 //	@return error
-func PlayAllMatches() ([]models.Match, error) {
+func PlayAllMatches() ([]models.Match,[]models.Team, error) {
 	matches := []models.Match{}
 
 	if err := db.DB.Preload("HomeTeam").Preload("AwayTeam").Find(&matches).Error; err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	for i := range matches {
 		if !matches[i].IsPlayed {
@@ -219,9 +223,12 @@ func PlayAllMatches() ([]models.Match, error) {
 			db.DB.Save(&homeTeam)
 			db.DB.Save(&awayTeam)
 		}
-
 	}
-	return matches, nil
+	teams := []models.Team{}
+	if err := db.DB.Order("points DESC").Order("goal_difference DESC").Find(&teams).Error; err != nil {
+		return nil, nil, err
+	}
+	return matches, teams, nil
 }
 
 // ChangeMatchResult changes match results of given id's match

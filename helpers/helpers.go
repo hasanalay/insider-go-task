@@ -26,3 +26,4 @@ func PlayMatch(homeTeamPower int, awayTeamPower int) (homeGoals int, awayGoals i
 	}
 	return
 }
+

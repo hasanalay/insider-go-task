@@ -277,7 +277,7 @@ func PlayMatch(c *fiber.Ctx) error {
 			"error": "Invalid match week number",
 		})
 	}
-	matches, err := repository.PlayMatch(uint(week))
+	matches, teams, err := repository.PlayMatch(uint(week))
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
@@ -290,7 +290,8 @@ func PlayMatch(c *fiber.Ctx) error {
 	}
 	return c.JSON(fiber.Map{
 		"message": fmt.Sprintf("Matches of week:%s played successfully!", c.Params("week")),
-		"data":    matches,
+		"matches":    matches,
+		"league-leaderboard": teams,
 	})
 }
 
@@ -299,7 +300,7 @@ func PlayMatch(c *fiber.Ctx) error {
 //	@param c
 //	@return error
 func PlayAllMatches(c *fiber.Ctx) error {
-	matches, err := repository.PlayAllMatches()
+	matches,teams, err := repository.PlayAllMatches()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
@@ -312,7 +313,9 @@ func PlayAllMatches(c *fiber.Ctx) error {
 	}
 	return c.JSON(fiber.Map{
 		"message": " All Matches played successfully!",
-		"data":    matches,
+		"matches":    matches,
+		"league-leaderboard": teams,
+
 	})
 }
 
