@@ -208,6 +208,7 @@ func UpdateMatch(c *fiber.Ctx) error {
 		})
 	}
 	if err := repository.UpdateMatch(uint(id), match); err != nil {
+		
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
 		})

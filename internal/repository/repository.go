@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"errors"
+
 	"github.com/hasanalay/insider-go-task/helpers"
 	"github.com/hasanalay/insider-go-task/internal/db"
 	"github.com/hasanalay/insider-go-task/internal/models"
@@ -95,8 +97,16 @@ func GetMatchByID(id uint) (*models.Match, error) {
 //	@param updatedMatch
 //	@return error
 func UpdateMatch(id uint, updatedMatch *models.Match) error {
-	return db.DB.Model(&models.Match{}).Where("id = ?", id).Updates(updatedMatch).Error
+	match := models.Match{}
+	if err := db.DB.Preload("HomeTeam").Preload("AwayTeam").First(&match, id).Error; err != nil {
+		return err
+	}
+	if !match.IsPlayed {
+		return db.DB.Model(&models.Match{}).Where("id = ?", id).Updates(updatedMatch).Error
+	}
+	return errors.New("the match has already been played and cannot be updated")
 }
+
 
 // DeleteMatch deletes match
 //
