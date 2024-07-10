@@ -25,6 +25,7 @@ func ConnectDB() error {
 		return err
 	}
 
+	// auto migrate models to the database
 	if err := DB.AutoMigrate(&models.Team{}, &models.Match{}); err != nil {
 		return err
 	}

@@ -6,6 +6,10 @@ import (
 	"github.com/hasanalay/insider-go-task/internal/models"
 )
 
+// GetTeams  retrieves all teams
+//
+//	@return []models.Team
+//	@return error
 func GetTeams() ([]models.Team, error) {
 	teams := []models.Team{}
 	if err := db.DB.Find(&teams).Error; err != nil {
@@ -14,10 +18,19 @@ func GetTeams() ([]models.Team, error) {
 	return teams, nil
 }
 
+// CreateTeam  creates team
+//
+//	@param team
+//	@return error
 func CreateTeam(team *models.Team) error {
 	return db.DB.Create(team).Error
 }
 
+// GetTeamByID get team information with an id
+//
+//	@param id
+//	@return *models.Team
+//	@return error
 func GetTeamByID(id uint) (*models.Team, error) {
 	team := models.Team{}
 	if err := db.DB.First(&team, id).Error; err != nil {
@@ -26,14 +39,27 @@ func GetTeamByID(id uint) (*models.Team, error) {
 	return &team, nil
 }
 
+// UpdateTeam updates team
+//
+//	@param id
+//	@param updatedTeam
+//	@return error
 func UpdateTeam(id uint, updatedTeam *models.Team) error {
 	return db.DB.Model(&models.Team{}).Where("id = ?", id).Updates(updatedTeam).Error
 }
 
+// DeleteTeam deletes team
+//
+//	@param id
+//	@return error
 func DeleteTeam(id uint) error {
 	return db.DB.Delete(&models.Team{}, id).Error
 }
 
+// GetMatches retrieves all matches
+//
+//	@return []models.Match
+//	@return error
 func GetMatches() ([]models.Match, error) {
 	matches := []models.Match{}
 	if err := db.DB.Preload("HomeTeam").Preload("AwayTeam").Find(&matches).Error; err != nil {
@@ -42,10 +68,19 @@ func GetMatches() ([]models.Match, error) {
 	return matches, nil
 }
 
+// CreateMatch creates match
+//
+//	@param match
+//	@return error
 func CreateMatch(match *models.Match) error {
 	return db.DB.Create(match).Error
 }
 
+// GetMatchByID get team information with an id
+//
+//	@param id
+//	@return *models.Match
+//	@return error
 func GetMatchByID(id uint) (*models.Match, error) {
 	match := models.Match{}
 	if err := db.DB.Preload("HomeTeam").Preload("AwayTeam").First(&match, id).Error; err != nil {
@@ -54,14 +89,28 @@ func GetMatchByID(id uint) (*models.Match, error) {
 	return &match, nil
 }
 
+// UpdateMatch updates match
+//
+//	@param id
+//	@param updatedMatch
+//	@return error
 func UpdateMatch(id uint, updatedMatch *models.Match) error {
 	return db.DB.Model(&models.Match{}).Where("id = ?", id).Updates(updatedMatch).Error
 }
 
+// DeleteMatch deletes match
+//
+//	@param id
+//	@return error
 func DeleteMatch(id uint) error {
 	return db.DB.Delete(&models.Match{}, id).Error
 }
 
+// GetMatchesByWeek retrieves given week's matches
+//
+//	@param week
+//	@return []models.Match
+//	@return error
 func GetMatchesByWeek(week uint) ([]models.Match, error) {
 	matches := []models.Match{}
 
@@ -71,6 +120,11 @@ func GetMatchesByWeek(week uint) ([]models.Match, error) {
 	return matches, nil
 }
 
+// PlayMatch plays given week's matches
+//
+//	@param week
+//	@return []models.Match
+//	@return error
 func PlayMatch(week uint) ([]models.Match, error) {
 	matches := []models.Match{}
 
@@ -114,6 +168,10 @@ func PlayMatch(week uint) ([]models.Match, error) {
 	return matches, nil
 }
 
+// PlayAllMatches  plays all matches at once
+//
+//	@return []models.Match
+//	@return error
 func PlayAllMatches() ([]models.Match, error) {
 	matches := []models.Match{}
 
@@ -156,14 +214,12 @@ func PlayAllMatches() ([]models.Match, error) {
 	return matches, nil
 }
 
-/**
- * Func: ChangeMatchResult is for change the result of a match which played before
- * 
- * @author hasanalay 
- *
- * @params id uint, updatedMatch *models.Match
- * @return
- */
+// ChangeMatchResult changes match results of given id's match
+//
+//	@param id
+//	@param updatedMatch
+//	@return *models.Match
+//	@return error
 func ChangeMatchResult(id uint, updatedMatch *models.Match) (*models.Match, error) {
 	match := models.Match{}
 	if err := db.DB.Preload("HomeTeam").Preload("AwayTeam").First(&match, id).Error; err != nil {
@@ -222,4 +278,3 @@ func ChangeMatchResult(id uint, updatedMatch *models.Match) (*models.Match, erro
 
 	return &matchResult, nil
 }
-

@@ -12,6 +12,7 @@ import (
 
 func main() {
 
+	// load .env file
 	envPath, err := filepath.Abs("../../.env")
 	if err != nil {
 		log.Fatal("Error determining .env file path: ", err)
@@ -23,10 +24,12 @@ func main() {
 
 	app := fiber.New()
 
+	// connect database
 	if err := db.ConnectDB(); err != nil {
 		log.Fatal(err)
 	}
 
+	// routes
 	api := app.Group("/api")
 	api.Get("/teams", handlers.GetTeams)
 	api.Post("/teams", handlers.CreateTeam)

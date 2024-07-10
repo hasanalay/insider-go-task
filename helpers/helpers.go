@@ -2,6 +2,11 @@ package helpers
 
 import "math/rand"
 
+// PlayMatch determines match score
+//  @param homeTeamPower 
+//  @param awayTeamPower 
+//  @return homeGoals 
+//  @return awayGoals 
 func PlayMatch(homeTeamPower int, awayTeamPower int) (homeGoals int, awayGoals int) {
 	homeAdwantage := 3
 	awayDisadwantage := 4

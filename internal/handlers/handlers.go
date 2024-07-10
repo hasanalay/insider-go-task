@@ -9,7 +9,10 @@ import (
 	"github.com/hasanalay/insider-go-task/internal/repository"
 )
 
-// region Team
+// GetTeams handler function to get teams
+
+// @param c
+// @return error
 func GetTeams(c *fiber.Ctx) error {
 	teams, err := repository.GetTeams()
 	if err != nil {
@@ -23,6 +26,10 @@ func GetTeams(c *fiber.Ctx) error {
 	})
 }
 
+// CreateTeam handler function to create team
+//
+//	@param c
+//	@return error
 func CreateTeam(c *fiber.Ctx) error {
 	team := new(models.Team)
 	if err := c.BodyParser(team); err != nil {
@@ -41,6 +48,10 @@ func CreateTeam(c *fiber.Ctx) error {
 	})
 }
 
+// GetTeamByID handler function to get a team with given id
+//
+//	@param c
+//	@return error
 func GetTeamByID(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -65,6 +76,10 @@ func GetTeamByID(c *fiber.Ctx) error {
 	})
 }
 
+// UpdateTeam handler function to update a teamwith given id
+//
+//	@param c
+//	@return error
 func UpdateTeam(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -89,6 +104,10 @@ func UpdateTeam(c *fiber.Ctx) error {
 	})
 }
 
+// DeleteTeam handler function to delete a team with given id
+//
+//	@param c
+//	@return error
 func DeleteTeam(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -104,9 +123,10 @@ func DeleteTeam(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNoContent)
 }
 
-//endregion Team
-
-// region Match
+// GetMatches handler function to get matches
+//
+//	@param c
+//	@return error
 func GetMatches(c *fiber.Ctx) error {
 	matches, err := repository.GetMatches()
 	if err != nil {
@@ -120,6 +140,10 @@ func GetMatches(c *fiber.Ctx) error {
 	})
 }
 
+// CreateMatch handler function to create a match
+//
+//	@param c
+//	@return error
 func CreateMatch(c *fiber.Ctx) error {
 	match := new(models.Match)
 	if err := c.BodyParser(match); err != nil {
@@ -138,6 +162,10 @@ func CreateMatch(c *fiber.Ctx) error {
 	})
 }
 
+// GetMatchByID handler function to get a match with given id
+//
+//	@param c
+//	@return error
 func GetMatchByID(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -162,6 +190,10 @@ func GetMatchByID(c *fiber.Ctx) error {
 	})
 }
 
+// UpdateMatch handler function to update a match with given id
+//
+//	@param c
+//	@return error
 func UpdateMatch(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -186,6 +218,10 @@ func UpdateMatch(c *fiber.Ctx) error {
 	})
 }
 
+// DeleteMatch handler function to delete a match with given id
+//
+//	@param c
+//	@return error
 func DeleteMatch(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
@@ -201,6 +237,10 @@ func DeleteMatch(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNoContent)
 }
 
+// GetMatchesByWeek handler function to get matches of given week
+//
+//	@param c
+//	@return error
 func GetMatchesByWeek(c *fiber.Ctx) error {
 	week, err := strconv.Atoi(c.Params("week"))
 	if err != nil {
@@ -225,6 +265,10 @@ func GetMatchesByWeek(c *fiber.Ctx) error {
 	})
 }
 
+// PlayMatch handler function to play matches of given week
+//
+//	@param c
+//	@return error
 func PlayMatch(c *fiber.Ctx) error {
 	week, err := strconv.Atoi(c.Params("week"))
 	if err != nil {
@@ -249,6 +293,10 @@ func PlayMatch(c *fiber.Ctx) error {
 	})
 }
 
+// PlayAllMatches handler function to play matches at once
+//
+//	@param c
+//	@return error
 func PlayAllMatches(c *fiber.Ctx) error {
 	matches, err := repository.PlayAllMatches()
 	if err != nil {
@@ -267,6 +315,10 @@ func PlayAllMatches(c *fiber.Ctx) error {
 	})
 }
 
+// ChangeMatchResult handler function to change result of matches of given id
+//
+//	@param c
+//	@return error
 func ChangeMatchResult(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
