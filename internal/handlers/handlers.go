@@ -267,4 +267,30 @@ func PlayAllMatches(c *fiber.Ctx) error {
 	})
 }
 
+func ChangeMatchResult(c *fiber.Ctx) error {
+	id, err := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid match ID",
+		})
+	}
+	match := new(models.Match)
+	if err := c.BodyParser(match); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	updatedMatch, err := repository.ChangeMatchResult(uint(id), match)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	return c.JSON(fiber.Map{
+		"message": "Match updated successfully!",
+		"data":    updatedMatch,
+	})
+
+}
+
 //endregion Match

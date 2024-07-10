@@ -155,3 +155,71 @@ func PlayAllMatches() ([]models.Match, error) {
 	}
 	return matches, nil
 }
+
+/**
+ * Func: ChangeMatchResult is for change the result of a match which played before
+ * 
+ * @author hasanalay 
+ *
+ * @params id uint, updatedMatch *models.Match
+ * @return
+ */
+func ChangeMatchResult(id uint, updatedMatch *models.Match) (*models.Match, error) {
+	match := models.Match{}
+	if err := db.DB.Preload("HomeTeam").Preload("AwayTeam").First(&match, id).Error; err != nil {
+		return nil, err
+	}
+
+	var homeTeam, awayTeam models.Team
+	db.DB.First(&homeTeam, match.HomeID)
+	db.DB.First(&awayTeam, match.AwayID)
+
+	if match.HomeGoals > match.AwayGoals {
+		homeTeam.Win--
+		homeTeam.Points -= 3
+		awayTeam.Lose--
+	} else if match.AwayGoals > match.HomeGoals {
+		awayTeam.Win--
+		awayTeam.Points -= 3
+		homeTeam.Lose--
+	} else {
+		homeTeam.Draw--
+		homeTeam.Points--
+		awayTeam.Draw--
+		awayTeam.Points--
+	}
+
+	match.HomeGoals = updatedMatch.HomeGoals
+	match.AwayGoals = updatedMatch.AwayGoals
+	match.IsPlayed = updatedMatch.IsPlayed
+
+	homeTeam.GoalDifference = int(updatedMatch.HomeGoals) - int(updatedMatch.AwayGoals)
+	awayTeam.GoalDifference = int(updatedMatch.AwayGoals) - int(updatedMatch.HomeGoals)
+
+	if updatedMatch.HomeGoals > updatedMatch.AwayGoals {
+		homeTeam.Win++
+		homeTeam.Points += 3
+		awayTeam.Lose++
+	} else if updatedMatch.AwayGoals > updatedMatch.HomeGoals {
+		awayTeam.Win++
+		awayTeam.Points += 3
+		homeTeam.Lose++
+	} else {
+		homeTeam.Draw++
+		homeTeam.Points++
+		awayTeam.Draw++
+		awayTeam.Points++
+	}
+
+	db.DB.Save(&homeTeam)
+	db.DB.Save(&awayTeam)
+	db.DB.Save(&match)
+
+	matchResult := models.Match{}
+	if err := db.DB.Preload("HomeTeam").Preload("AwayTeam").First(&matchResult, id).Error; err != nil {
+		return nil, err
+	}
+
+	return &matchResult, nil
+}
+

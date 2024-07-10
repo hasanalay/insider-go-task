@@ -43,6 +43,7 @@ func main() {
 
 	api.Get("/league/:week", handlers.PlayMatch)
 	api.Get("/leaugue", handlers.PlayAllMatches)
+	api.Put("/league/change-match/:id", handlers.ChangeMatchResult)
 
 	app.Listen(":3000")
 }
