@@ -220,10 +220,10 @@ func PlayAllMatches() ([]models.Match, error) {
 //	@param updatedMatch
 //	@return *models.Match
 //	@return error
-func ChangeMatchResult(id uint, updatedMatch *models.Match) (*models.Match, error) {
+func ChangeMatchResult(id uint, updatedMatch *models.Match) (*models.Match, *[]models.Team, error) {
 	match := models.Match{}
 	if err := db.DB.Preload("HomeTeam").Preload("AwayTeam").First(&match, id).Error; err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	var homeTeam, awayTeam models.Team
@@ -273,8 +273,12 @@ func ChangeMatchResult(id uint, updatedMatch *models.Match) (*models.Match, erro
 
 	matchResult := models.Match{}
 	if err := db.DB.Preload("HomeTeam").Preload("AwayTeam").First(&matchResult, id).Error; err != nil {
-		return nil, err
+		return nil, nil, err
+	}
+	teams := []models.Team{}
+	if err := db.DB.Order("points DESC").Order("goal_difference DESC").Find(&teams).Error; err != nil {
+		return nil, nil, err
 	}
 
-	return &matchResult, nil
+	return &matchResult, &teams, nil
 }

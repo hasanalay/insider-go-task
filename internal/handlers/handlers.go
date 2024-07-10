@@ -332,7 +332,7 @@ func ChangeMatchResult(c *fiber.Ctx) error {
 			"error": err.Error(),
 		})
 	}
-	updatedMatch, err := repository.ChangeMatchResult(uint(id), match)
+	updatedMatch, teams, err := repository.ChangeMatchResult(uint(id), match)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
@@ -340,7 +340,8 @@ func ChangeMatchResult(c *fiber.Ctx) error {
 	}
 	return c.JSON(fiber.Map{
 		"message": "Match updated successfully!",
-		"data":    updatedMatch,
+		"match":   updatedMatch,
+		"league-leaderboard":  teams,
 	})
 
 }
