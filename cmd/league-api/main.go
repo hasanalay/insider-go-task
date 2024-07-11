@@ -35,7 +35,7 @@ func main() {
 	api.Post("/teams", handlers.CreateTeam)
 	api.Get("/teams/:id", handlers.GetTeamByID)
 	api.Put("/teams/:id", handlers.UpdateTeam)
-	app.Delete("/teams/:id", handlers.DeleteTeam)
+	api.Delete("/teams/:id", handlers.DeleteTeam)
 
 	api.Get("/matches", handlers.GetMatches)
 	api.Post("/matches", handlers.CreateMatch)
