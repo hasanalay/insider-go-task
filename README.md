@@ -1,4 +1,4 @@
-# League API with GoLang and Postgresql
+# League API with GoLang and PostgreSQL
 
 - This API is an implementation of Football league system. 
 - The purpose of project is developing an API in a case study for  [insider](https://useinsider.com/)
@@ -11,7 +11,7 @@ The project will be up in the cloud for 90 days. Due to free tier limitations. H
 
 For a better experience a complete posman collection is uploaded in [repository](https://github.com/hasanalay/insider-go-task/blob/main/Insider-go-league-API.postman_collection.json).
 
-### To run in your local machine 
+## To run in your local machine 
 
 1. Create an `.env` file by typing `touch .env` in your terminal while in project's root folder.
 2. Enter these values. Dont forget the change your db connection information!
@@ -27,7 +27,7 @@ DB_SSLMODE=disable
 4. run ` go run cmd/league-api/main.go` in your termianl to run project.
 5. the application will accept requests in `http://localhost:3000/api/`
 
-### Explore ENDPOINTS
+## Explore ENDPOINTS
 ```
   TEAMS
 	Get("/teams", handlers.GetTeams)
@@ -48,6 +48,65 @@ DB_SSLMODE=disable
 	Get("/league/:week", handlers.PlayMatch)
 	Get("/league", handlers.PlayAllMatches)
 	Put("/league/change-match/:id", handlers.ChangeMatchResult)
+```
+
+### Models
+```
+type Team struct {
+	ID             uint   
+	TeamName       string 
+	Points         uint   
+	Win            uint   
+	Draw           uint   
+	Lose           uint   
+	GoalDifference int    
+	Power          int    
+}
+
+type Match struct {
+	ID        uint 
+	Week      uint 
+	HomeID    uint 
+	AwayID    uint 
+	HomeGoals uint 
+	AwayGoals uint 
+	IsPlayed  bool 
+
+	HomeTeam Team `gorm:"foreignkey:home_id" json:"home_team"`
+	AwayTeam Team `gorm:"foreignkey:away_id" json:"away_team"`
+}
+
+type Prediction struct {
+	Team       string
+	Percentage string
+}
+```
+### Create a Team
+
+`http://localhost:3000/api/teams`
+```
+{
+  "team_name": "Liverpool FC",
+  "points": 0,
+  "win": 0,
+  "draw": 0,
+  "lose": 0,
+  "goal_difference": 0,
+  "power": 4
+}
+```
+### Create a Match
+
+`http://localhost:3000/api/matches`
+```
+{
+    "week": 6,
+    "home_id": 3,
+    "away_id": 2,
+    "home_goals":0 ,
+    "away_goals":0 ,
+    "is_played": false 
+  }
 ```
 
 ### Manually Create Data
@@ -87,7 +146,9 @@ VALUES
     (12, 6, 3, 2, 0, 0, false);
 ```
 
-### League ENDPOINTS
+## League ENDPOINTS
+
+These Three endpoints are used for league system. Other endpoints are helpers for these endpoints. 
 
 #### Play Matches of Week
 
@@ -351,7 +412,6 @@ This endpoint is used for playing all the matches at once. As Response it return
     }
 }
 ```
-
 #### Change Match Scores
 
 `http://localhost:3000/api/league/change-match/1`
