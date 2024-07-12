@@ -1,0 +1,403 @@
+{
+	"info": {
+		"_postman_id": "028cb8ec-1a12-40fb-9e58-c6dd93c6626e",
+		"name": "Insider-go-league-API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28119242"
+	},
+	"item": [
+		{
+			"name": "Matches",
+			"item": [
+				{
+					"name": "Get Matches",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://34.30.232.220:3000/api/matches",
+							"protocol": "http",
+							"host": [
+								"34",
+								"30",
+								"232",
+								"220"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"matches"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Match By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://34.30.232.220:3000/api/matches/14",
+							"protocol": "http",
+							"host": [
+								"34",
+								"30",
+								"232",
+								"220"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"matches",
+								"14"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Matches By Week",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://34.30.232.220:3000/api/matches/week/7",
+							"protocol": "http",
+							"host": [
+								"34",
+								"30",
+								"232",
+								"220"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"matches",
+								"week",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Match",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\n{\n    \"week\": 1,\n    \"home_id\": 4,\n    \"away_id\": 3,\n    \"home_goals\":0 ,\n    \"away_goals\":0 ,\n    \"is_played\": false \n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://34.30.232.220:3000/api/matches",
+							"protocol": "http",
+							"host": [
+								"34",
+								"30",
+								"232",
+								"220"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"matches"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Match",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \n    \"week\": 1,\n    \"home_id\": 1,\n    \"away_id\": 2,\n    \"home_goals\":0,\n    \"away_goals\":0,\n    \"is_played\": false \n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://34.30.232.220:3000/api/matches/1",
+							"protocol": "http",
+							"host": [
+								"34",
+								"30",
+								"232",
+								"220"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"matches",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Match",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://34.30.232.220:3000/api/matches/14",
+							"protocol": "http",
+							"host": [
+								"34",
+								"30",
+								"232",
+								"220"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"matches",
+								"14"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Teams",
+			"item": [
+				{
+					"name": "Get Teams",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://34.30.232.220:3000/api/teams",
+							"protocol": "http",
+							"host": [
+								"34",
+								"30",
+								"232",
+								"220"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"teams"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Team",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"team_name\": \"Liverpool FC\",\n  \"points\": 0,\n  \"win\": 0,\n  \"draw\": 0,\n  \"lose\": 0,\n  \"goal_difference\": 0,\n  \"power\": 4\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://34.30.232.220:3000/api/teams",
+							"protocol": "http",
+							"host": [
+								"34",
+								"30",
+								"232",
+								"220"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"teams"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Team",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"team_name\": \"Manchester City FC\",\n  \"points\": 0,\n  \"win\": 0,\n  \"draw\": 0,\n  \"lose\": 0,\n  \"goal_difference\": 0,\n  \"power\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://34.30.232.220:3000/api/teams/5",
+							"protocol": "http",
+							"host": [
+								"34",
+								"30",
+								"232",
+								"220"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"teams",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Team",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://34.30.232.220:3000/api/teams/5",
+							"protocol": "http",
+							"host": [
+								"34",
+								"30",
+								"232",
+								"220"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"teams",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Team By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://34.30.232.220:3000/api/teams/4",
+							"protocol": "http",
+							"host": [
+								"34",
+								"30",
+								"232",
+								"220"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"teams",
+								"4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "League",
+			"item": [
+				{
+					"name": "Play Matches of Week",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://34.30.232.220:3000/api/league/1",
+							"protocol": "http",
+							"host": [
+								"34",
+								"30",
+								"232",
+								"220"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"league",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Play All Matches",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://34.30.232.220:3000/api/league",
+							"protocol": "http",
+							"host": [
+								"34",
+								"30",
+								"232",
+								"220"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"league"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Match scores",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{  \"week\": 1,\n  \"home_id\": 1,\n  \"away_id\": 2,\n  \"home_goals\":0,\n  \"away_goals\":3,\n  \"is_played\": true \n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://34.30.232.220:3000/api/league/change-match/1",
+							"protocol": "http",
+							"host": [
+								"34",
+								"30",
+								"232",
+								"220"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"league",
+								"change-match",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
