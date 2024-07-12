@@ -14,8 +14,8 @@ RUN go mod download
 COPY . .
 
 # Copy .env file to working directory
-RUN ls -a
-COPY .env ./.env
+RUN ls -la
+COPY .env .
 
 # Build the Go application
 RUN go build -o league-api ./cmd/league-api
@@ -25,3 +25,4 @@ EXPOSE 3000
 
 # Run the Go application
 CMD ["./league-api"]
+
