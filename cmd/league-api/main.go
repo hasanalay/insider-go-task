@@ -13,7 +13,7 @@ import (
 func main() {
 
 	// load .env file
-	envPath, err := filepath.Abs("../../.env")
+	envPath, err := filepath.Abs(".env")
 	if err != nil {
 		log.Fatal("Error determining .env file path: ", err)
 	}
