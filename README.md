@@ -16,7 +16,6 @@ Details are coming soon...
 	app.Get("matches/week/:week", handlers.GetMatchesByWeek)
 ````
 
-
 ### ENDPOINT Request Examples:
 
 #### Create team

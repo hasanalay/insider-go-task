@@ -23,6 +23,10 @@ type Match struct {
 	IsPlayed  bool `gorm:"default:false" json:"is_played"`
 
 	HomeTeam Team `gorm:"foreignkey:home_id" json:"home_team"`
-    AwayTeam Team `gorm:"foreignkey:away_id" json:"away_team"`
+	AwayTeam Team `gorm:"foreignkey:away_id" json:"away_team"`
+}
 
+type Prediction struct {
+	Team       string
+	Percentage string
 }

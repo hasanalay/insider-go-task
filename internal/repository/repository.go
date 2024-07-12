@@ -107,7 +107,6 @@ func UpdateMatch(id uint, updatedMatch *models.Match) error {
 	return errors.New("the match has already been played and cannot be updated")
 }
 
-
 // DeleteMatch deletes match
 //
 //	@param id
@@ -135,11 +134,11 @@ func GetMatchesByWeek(week uint) ([]models.Match, error) {
 //	@param week
 //	@return []models.Match
 //	@return error
-func PlayMatch(week uint) ([]models.Match,[]models.Team, error) {
+func PlayMatch(week uint) ([]models.Match, []models.Team, []models.Prediction, error) {
 	matches := []models.Match{}
 
 	if err := db.DB.Preload("HomeTeam").Preload("AwayTeam").Where("week = ?", week).Find(&matches).Error; err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 	for i := range matches {
 		if !matches[i].IsPlayed {
@@ -175,22 +174,32 @@ func PlayMatch(week uint) ([]models.Match,[]models.Team, error) {
 			db.DB.Save(&awayTeam)
 		}
 	}
+
 	teams := []models.Team{}
 	if err := db.DB.Order("points DESC").Order("goal_difference DESC").Find(&teams).Error; err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
-	return matches, teams, nil
+
+	var predictions []models.Prediction
+	if week >= 4 {
+		var err error
+		predictions, err = PredictChampion(teams)
+		if err != nil {
+			return nil, nil, nil, err
+		}
+	}
+	return matches, teams, predictions, nil
 }
 
 // PlayAllMatches  plays all matches at once
 //
 //	@return []models.Match
 //	@return error
-func PlayAllMatches() ([]models.Match,[]models.Team, error) {
+func PlayAllMatches() ([]models.Match, []models.Team, []models.Prediction, error) {
 	matches := []models.Match{}
 
 	if err := db.DB.Preload("HomeTeam").Preload("AwayTeam").Find(&matches).Error; err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 	for i := range matches {
 		if !matches[i].IsPlayed {
@@ -226,9 +235,15 @@ func PlayAllMatches() ([]models.Match,[]models.Team, error) {
 	}
 	teams := []models.Team{}
 	if err := db.DB.Order("points DESC").Order("goal_difference DESC").Find(&teams).Error; err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
-	return matches, teams, nil
+	var predictions []models.Prediction
+	var err error
+	predictions, err = PredictChampion(teams)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	return matches, teams, predictions, nil
 }
 
 // ChangeMatchResult changes match results of given id's match
@@ -298,4 +313,28 @@ func ChangeMatchResult(id uint, updatedMatch *models.Match) (*models.Match, *[]m
 	}
 
 	return &matchResult, &teams, nil
+}
+
+// PredictChampion a helper method to predict champion
+//
+//	@param []models.Team
+//	@return []models.Prediction
+//	@return error
+func PredictChampion([]models.Team) ([]models.Prediction, error) {
+	teams := []models.Team{}
+	if err := db.DB.Find(&teams).Error; err != nil {
+		return nil, err
+	}
+
+	var totalPoints uint
+	for i := range teams {
+		totalPoints += teams[i].Points
+	}
+	prediction := make([]models.Prediction, len(teams))
+	for i, team := range teams {
+		percentage := helpers.PredictChampion(team.Points, totalPoints)
+		prediction[i].Team = team.TeamName
+		prediction[i].Percentage = percentage
+	}
+	return prediction, nil
 }

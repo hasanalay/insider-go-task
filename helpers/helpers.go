@@ -1,12 +1,16 @@
 package helpers
 
-import "math/rand"
+import (
+	"fmt"
+	"math/rand"
+)
 
 // PlayMatch determines match score
-//  @param homeTeamPower 
-//  @param awayTeamPower 
-//  @return homeGoals 
-//  @return awayGoals 
+//
+//	@param homeTeamPower
+//	@param awayTeamPower
+//	@return homeGoals
+//	@return awayGoals
 func PlayMatch(homeTeamPower int, awayTeamPower int) (homeGoals int, awayGoals int) {
 	homeAdwantage := 3
 	awayDisadwantage := 4
@@ -25,5 +29,11 @@ func PlayMatch(homeTeamPower int, awayTeamPower int) (homeGoals int, awayGoals i
 		awayGoals = rand.Intn(8) + 1
 	}
 	return
+}
+func PredictChampion(points, totalPoints uint) (percentage string) {
+	if totalPoints == 0 || points == 0 {
+		return "0%" 
+	}
+	return fmt.Sprintf("%d%%", (points * 100) / totalPoints)
 }
 

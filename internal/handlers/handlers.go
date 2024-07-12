@@ -208,7 +208,7 @@ func UpdateMatch(c *fiber.Ctx) error {
 		})
 	}
 	if err := repository.UpdateMatch(uint(id), match); err != nil {
-		
+
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
 		})
@@ -277,7 +277,7 @@ func PlayMatch(c *fiber.Ctx) error {
 			"error": "Invalid match week number",
 		})
 	}
-	matches, teams, err := repository.PlayMatch(uint(week))
+	matches, teams, predictions, err := repository.PlayMatch(uint(week))
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
@@ -289,9 +289,18 @@ func PlayMatch(c *fiber.Ctx) error {
 		})
 	}
 	return c.JSON(fiber.Map{
-		"message": fmt.Sprintf("Matches of week:%s played successfully!", c.Params("week")),
-		"matches":    matches,
-		"league-leaderboard": teams,
+		"league": fiber.Map{
+			"league-leaderboard": teams,
+		},
+		"matches": fiber.Map{
+			"message": fmt.Sprintf("Matches of week:%s played successfully!", strconv.Itoa(week)),
+			"matches": matches,
+		},
+
+		"next-week-predictions": fiber.Map{
+			"message":     fmt.Sprintf("%sth week predictions for Championship", strconv.Itoa(week+1)),
+			"predictions": predictions,
+		},
 	})
 }
 
@@ -300,7 +309,7 @@ func PlayMatch(c *fiber.Ctx) error {
 //	@param c
 //	@return error
 func PlayAllMatches(c *fiber.Ctx) error {
-	matches,teams, err := repository.PlayAllMatches()
+	matches, teams, predictions, err := repository.PlayAllMatches()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
@@ -312,10 +321,17 @@ func PlayAllMatches(c *fiber.Ctx) error {
 		})
 	}
 	return c.JSON(fiber.Map{
-		"message": " All Matches played successfully!",
-		"matches":    matches,
-		"league-leaderboard": teams,
-
+		"league": fiber.Map{
+			"league-leaderboard": teams,
+		},
+		"matches": fiber.Map{
+			"message": "All Matches played successfully!",
+			"matches": matches,
+		},
+		"next-week-predictions": fiber.Map{
+			"message":     "Next week match predictions",
+			"predictions": predictions,
+		},
 	})
 }
 
@@ -343,9 +359,11 @@ func ChangeMatchResult(c *fiber.Ctx) error {
 		})
 	}
 	return c.JSON(fiber.Map{
+		"league": fiber.Map{
+			"league-leaderboard": teams,
+		},
 		"message": "Match updated successfully!",
 		"match":   updatedMatch,
-		"league-leaderboard":  teams,
 	})
 
 }
