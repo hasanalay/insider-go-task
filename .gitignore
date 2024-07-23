@@ -21,3 +21,4 @@ go.work.sum
 # env file
 .env
 /cmd/league-api/__debug_bin4285171816
+/.idea

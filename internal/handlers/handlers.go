@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -369,3 +370,14 @@ func ChangeMatchResult(c *fiber.Ctx) error {
 }
 
 //endregion Match
+
+func Welcome(c *fiber.Ctx) error {
+	data, err := os.ReadFile("README.md")
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+	c.Set("Content-Type", "text/markdown")
+    return c.SendString(string(data))
+}

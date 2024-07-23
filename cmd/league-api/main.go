@@ -31,6 +31,7 @@ func main() {
 
 	// routes
 	api := app.Group("/api")
+	api.Get("/", handlers.Welcome)
 	api.Get("/teams", handlers.GetTeams)
 	api.Post("/teams", handlers.CreateTeam)
 	api.Get("/teams/:id", handlers.GetTeamByID)
